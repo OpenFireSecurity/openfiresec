@@ -22,7 +22,7 @@ Account may send query & transaction iff it roles has related permission that ha
 ### Sensor
 
 is Account with
-- account (account_name=`"sensor_id"` (NFC id))
+- account (account_name=`"sensorid"` (NFC id))
 - role (name=`"sensor"`, permissions=`{can_set_my_account_detail, can_receive}`)
 
 
@@ -39,8 +39,25 @@ Bindings use string representation e.g `amount="123"`
 ### Verifier
 
 is Account with
-- account (account_name=`"verifier_id"`)
-- role (name=`"verifier"`, permissions=`{can_transfer, can_add_asset_qty}`)
+- account (account_name=`"verifier"`)
+- role (name=`"verifier"`, permissions=`{can_transfer}`)
+
+
+### Observer
+
+is Account with
+- account (account_name=`"observer"`)
+- role (name=`"visitor"`, permissions=`{can_get_all_acc_ast, can_get_all_accounts, can_get_all_acc_detail, can_get_all_acc_txs}`)
+
+
+### Admin
+
+is Account with
+- account (account_name=`"admin"`)
+- role (name`"moderator"`, permissions=`{can_create_account, can_append_role, can_detach_role, can_add_asset_qty, can_add_peer}`)
+- the rest existing roles
+
+Adds or disables subjects of the network. Note that the list of specified permissions are the minimal and it can be extended for more feature-rich managing.
 
 
 ## System Actions
@@ -52,20 +69,20 @@ All interaction with Iroha performed via [gRPC](https://github.com/grpc/grpc) pr
 Sensors periodically send data about its state, in our example that might be only temperature
 Temperature represented by `AccountDetail`:
 - Can be updated with `SetAccountDetail` (key=`"temp"`, val=`"30"`)
-- Can be queries with `getAccountDetail` (account_name=`sensor_id`)
+- Can be queries with `getAccountDetail` (account_name=`sensorid`)
 
 
 ### Sensors Checking (via NFC)
 
 Android application attaches to the NFC transmitter and receives NFC id.
 Then it able to send the sensor state (either good or bad):
-- Good is TransferAsset(src_account_id=`verified_id`,
-                        dest_account_id=`sensor_id`,
+- Good is TransferAsset(src_account_id=`verified`,
+                        dest_account_id=`sensorid`,
                         asset_id=`"checks"`,
                         description=`"work"`,
                         amount=`"1"`)
-- Bad is TransferAsset(src_account_id=`verified_id`,
-                       dest_account_id=`sensor_id`,
+- Bad is TransferAsset(src_account_id=`verified`,
+                       dest_account_id=`sensorid`,
                        asset_id=`"checks"`,
                        description=`"broken"`,
                        amount=`"1"`)
